@@ -1,0 +1,25 @@
+[2013-10-09 15:06:53] START
+[2013-10-09 15:08:58] EDIT QuizMe/controllers/default.py: -1
+[2013-10-09 15:10:09] EDIT QuizMe/controllers/default.py: 0
+[2013-10-09 15:11:14] EDIT QuizMe/views/default/index.html: -23
+[2013-10-09 15:12:29] EDIT QuizMe/views/default/index.html: 1
+[2013-10-09 15:12:40] EDIT QuizMe/views/default/index.html: 0
+[2013-10-09 15:13:08] EDIT QuizMe/views/default/index.html: 0
+[2013-10-09 15:15:27] EDIT QuizMe/views/default/index.html: 3
+[2013-10-09 15:16:25] EDIT QuizMe/views/default/index.html: -1
+[2013-10-09 15:17:11] EDIT QuizMe/controllers/default.py: 1
+[2013-10-09 15:43:21] EDIT QuizMe/controllers/default.py: 4
+[2013-10-09 15:43:42] CREATE default/first.html: 0
+[2013-10-09 15:44:41] EDIT QuizMe/views/default/first.html: 3
+[2013-10-09 15:44:57] CREATE default/second.html: 0
+[2013-10-09 15:45:31] EDIT QuizMe/views/default/second.html: 1
+[2013-10-09 15:47:59] EDIT QuizMe/controllers/default.py: 3
+[2013-10-09 15:48:06] EDIT QuizMe/controllers/default.py: 0
+[2013-10-09 15:48:35] EDIT QuizMe/views/default/second.html: 0
+[2013-10-09 15:48:46] EDIT QuizMe/views/default/second.html: 0
+[2013-10-09 15:49:40] EDIT QuizMe/controllers/default.py: 0
+[2013-10-09 15:49:56] EDIT QuizMe/views/default/first.html: 0
+[2013-10-09 15:50:17] EDIT QuizMe/views/default/second.html: 0
+[2013-10-09 23:21:15] EDIT QuizMe/models/db.py: 5
+[2013-10-09 23:21:27] EDIT QuizMe/models/db.py: 0
+[2013-10-09 23:25:43] EDIT QuizMe/models/db.py: 3
