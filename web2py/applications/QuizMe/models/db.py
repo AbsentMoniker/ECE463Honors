@@ -1,3 +1,5 @@
+from gluon.dal import gae
+
 # -*- coding: utf-8 -*-
 
 #########################################################################
@@ -40,8 +42,12 @@ response.generic_patterns = ['*'] if request.is_local else []
 #########################################################################
 
 from gluon.tools import Auth, Crud, Service, PluginManager, prettydate
+from gluon.contrib.login_methods.gae_google_account import GaeGoogleAccount
 auth = Auth(db)
 crud, service, plugins = Crud(db), Service(), PluginManager()
+
+## Set auth to user Google Authentication
+auth.settings.login_form = GaeGoogleAccount()
 
 ## create all tables needed by auth if not custom tables
 auth.define_tables(username=False, signature=False)
@@ -56,6 +62,8 @@ mail.settings.login = 'username:password'
 auth.settings.registration_requires_verification = False
 auth.settings.registration_requires_approval = False
 auth.settings.reset_password_requires_verification = True
+
+auth.settings.actions_disabled = ['retrieve_username','request_reset_password', 'register', 'change_password', 'profile']
 
 ## if you need to use OpenID, Facebook, MySpace, Twitter, Linkedin, etc.
 ## register with janrain.com, write your domain:api_key in private/janrain.key
@@ -83,10 +91,10 @@ use_janrain(auth, filename='private/janrain.key')
 # auth.enable_record_versioning(db)
 db.define_table('question',
                 Field('question','string'),
-                Field('answers','list:string'),
+                Field('answers',type=gae.StringListProperty()),
                 Field('correct', 'integer'))
 
 db.define_table('quiz',
                 Field('name','string'),
-                Field('questions', 'list:reference question'),
-                Field('author', 'reference auth_user'))
+                Field('questions', type=gae.ListProperty(int)),
+                Field('author_id', 'string'))

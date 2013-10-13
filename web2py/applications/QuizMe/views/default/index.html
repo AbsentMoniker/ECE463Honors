@@ -1,14 +1,16 @@
+{{extend 'layout.html'}}
 <html>
     <head>
         
     </head>
     <body>
-        <h1>
-            {{=message}}
-            
-        </h1>
-        <h2>
-            Number of visits: {{=counter}}
-        </h2>
+        {{if user:}}
+        Welcome, {{=user.nickname()}}!
+        
+        You can <a href="{{=url}}">logout here</a>
+        
+        {{else:}}
+        Welcome! Be sure to <a href="{{=url}}">Sign in here!</a>
+        {{pass}}
     </body>
 </html>
