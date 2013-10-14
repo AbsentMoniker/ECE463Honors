@@ -1,8 +1,11 @@
 {{extend 'layout.html'}}
 {{if quizzes:}}
-You've created quizzes!
-{{=quizzes}}
-
+<h1>
+    Quizzes
+</h1>
+{{for quiz in quizzes:}}
+{{=A(quiz.name, _href=URL('quizzes','show',vars={'id':quiz.id}))  }} <br />
+{{pass}}
 {{else:}}
 You have not created any quizzes!
 {{pass}}

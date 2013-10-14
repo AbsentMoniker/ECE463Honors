@@ -16,3 +16,9 @@ def create():
         db.quiz.insert(name=request.vars.name,author_id=users.get_current_user().user_id())
         redirect('/QuizMe/quizzes')
     return form
+
+def show():
+    quiz = db(db.quiz.id==request.get_vars['id']).select()[0]
+    if quiz.author_id != users.get_current_user().user_id():
+        redirect('/QuizMe/quizzes')
+    return dict(quiz=quiz)
