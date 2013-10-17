@@ -91,10 +91,10 @@ use_janrain(auth, filename='private/janrain.key')
 # auth.enable_record_versioning(db)
 db.define_table('question',
                 Field('question','string'),
-                Field('answers',type=gae.StringListProperty()),
+                Field('answers','list:string'),
                 Field('correct', 'integer'))
 
 db.define_table('quiz',
                 Field('name','string'),
-                Field('questions', type=gae.ListProperty(int)),
+                Field('questions', 'list:integer'),
                 Field('author_id', 'string'))

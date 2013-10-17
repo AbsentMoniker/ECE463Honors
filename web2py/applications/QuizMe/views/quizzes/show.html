@@ -1,4 +1,16 @@
 {{extend 'layout.html'}}
 <h1>
     {{=quiz.name}}
+    Hello!
 </h1>
+{{qnum = 1}}
+{{for q in questions:}}
+<h3>
+    {{=qnum}}) {{=q.question}}
+</h3>
+<ol type='a'>
+{{for answer in q.answers:}}
+<li>{{=answer}}</li>
+{{pass}}
+</ol>
+{{pass}}
