@@ -104,6 +104,6 @@ db.define_table('question',
 
 db.define_table('quiz',
                 Field('name','string'),
-                Field('questions', 'list:integer'),
-                Field('author_id', 'string'),
+                Field('questions', 'list:reference question'),
+                Field('author_id', 'reference auth_user'),
                 Field('active', 'boolean', default=False))

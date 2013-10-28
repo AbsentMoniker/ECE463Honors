@@ -238,3 +238,13 @@
 [2013-10-28 13:00:44] EDIT QuizMe/controllers/default.py: 0
 [2013-10-28 13:01:49] EDIT QuizMe/controllers/default.py: 0
 [2013-10-28 13:02:31] EDIT QuizMe/controllers/default.py: 4
+[2013-10-28 13:05:41] EDIT QuizMe/controllers/quizzes.py: 0
+[2013-10-28 13:11:28] EDIT QuizMe/models/db.py: 0
+[2013-10-28 13:12:56] EDIT QuizMe/controllers/quizzes.py: -1
+[2013-10-28 13:15:03] EDIT QuizMe/models/db.py: 0
+[2013-10-28 13:22:59] EDIT QuizMe/controllers/quizzes.py: 0
+[2013-10-28 13:23:16] EDIT QuizMe/controllers/quizzes.py: 0
+[2013-10-28 13:24:18] EDIT QuizMe/controllers/quizzes.py: 0
+[2013-10-28 13:24:35] EDIT QuizMe/controllers/quizzes.py: 0
+[2013-10-28 13:26:27] EDIT QuizMe/views/quizzes/take.html: 2
+[2013-10-28 13:26:38] EDIT QuizMe/views/quizzes/take.html: -2

@@ -1,12 +1,11 @@
 from google.appengine.api import users
 
 def index():
-    user = users.get_current_user()
-    if user:
-        quizzes = db(db.quiz.author_id==user.user_id()).select(db.quiz.name)
+    if auth.is_logged_in():
+        quizzes = db(db.quiz.author_id==auth.user.id).select(db.quiz.name)
         return dict(quizzes=quizzes)
     else:
-        redirect(users.create_login_url('/quizzes'))
+        redirect(URL('default','user'))
         
 def create():
     form=FORM('Quiz Name:',
@@ -27,19 +26,19 @@ def create():
               #INPUT(_value="Submit Quiz", _name="quizSubmit", _type="submit")
               )
     if form.process().accepted:
-        quizId = db.quiz.insert(name=request.vars.name,author_id=users.get_current_user().user_id())
+        quizId = db.quiz.insert(name=request.vars.name,author_id=auth.user.id)
         redirect(URL('quizzes','addquestion', vars={"id":quizId}))
     return dict(form=form)
 
 def addquestion():
     form=FORM('Question:',
-              INPUT(_name='question', requires=IS_NOT_EMPTY()),
-              'Answers:',
-              INPUT(_name='answer1', requres=IS_NOT_EMPTY()),
-              INPUT(_name='answer2', requires=IS_NOT_EMPTY()),
-              INPUT(_name='answer3', requires=IS_NOT_EMPTY()),
-              INPUT(_name='answer4', requires=IS_NOT_EMPTY()),
-              INPUT(_name='answer5', requires=IS_NOT_EMPTY()),
+              INPUT(_name='question', requires=IS_NOT_EMPTY()),BR(),
+              'Answers:',BR(),
+              INPUT(_name='answer1', requres=IS_NOT_EMPTY()),BR(),
+              INPUT(_name='answer2', requires=IS_NOT_EMPTY()),BR(),
+              INPUT(_name='answer3', requires=IS_NOT_EMPTY()),BR(),
+              INPUT(_name='answer4', requires=IS_NOT_EMPTY()),BR(),
+              INPUT(_name='answer5', requires=IS_NOT_EMPTY()),BR(),
               INPUT(_value="Add Question", _name="questionAdd", _type="submit"),
               INPUT(_value="Done Creating Quiz", _name="quizSubmit", _type="submit")
               )
@@ -63,7 +62,7 @@ def addquestion():
 
 def show():
     quiz = db(db.quiz.id==request.get_vars['id']).select()[0]
-    if quiz.author_id != users.get_current_user().user_id():
+    if quiz.author_id != auth.user.id:
         redirect('/QuizMe/quizzes')
     questions = []
     for i in xrange(len(quiz.questions)):
@@ -75,7 +74,7 @@ def take():
     activeQ = db(db.question.id==quiz.questions[int(request.get_vars['q'])-1]).select()[0]
     status = ""
     val=request.vars
-    userid = users.get_current_user().user_id()
+    userid = auth.user.id
     results=[]
     if userid == quiz.author_id:
         owner = True

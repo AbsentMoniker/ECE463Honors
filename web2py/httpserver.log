@@ -831,3 +831,13 @@
 127.0.0.1, 2013-10-28 13:00:44, POST, /admin/default/edit/QuizMe/controllers/default.py, HTTP/1.1, 200, 0.027315
 127.0.0.1, 2013-10-28 13:01:49, POST, /admin/default/edit/QuizMe/controllers/default.py, HTTP/1.1, 200, 0.040191
 127.0.0.1, 2013-10-28 13:02:31, POST, /admin/default/edit/QuizMe/controllers/default.py, HTTP/1.1, 200, 0.021510
+127.0.0.1, 2013-10-28 13:05:41, POST, /admin/default/edit/QuizMe/controllers/quizzes.py, HTTP/1.1, 200, 0.031595
+127.0.0.1, 2013-10-28 13:11:28, POST, /admin/default/edit/QuizMe/models/db.py, HTTP/1.1, 200, 0.028768
+127.0.0.1, 2013-10-28 13:12:56, POST, /admin/default/edit/QuizMe/controllers/quizzes.py, HTTP/1.1, 200, 0.030548
+127.0.0.1, 2013-10-28 13:15:03, POST, /admin/default/edit/QuizMe/models/db.py, HTTP/1.1, 200, 0.024111
+127.0.0.1, 2013-10-28 13:22:59, POST, /admin/default/edit/QuizMe/controllers/quizzes.py, HTTP/1.1, 200, 0.026935
+127.0.0.1, 2013-10-28 13:23:16, POST, /admin/default/edit/QuizMe/controllers/quizzes.py, HTTP/1.1, 200, 0.028294
+127.0.0.1, 2013-10-28 13:24:18, POST, /admin/default/edit/QuizMe/controllers/quizzes.py, HTTP/1.1, 200, 0.028230
+127.0.0.1, 2013-10-28 13:24:35, POST, /admin/default/edit/QuizMe/controllers/quizzes.py, HTTP/1.1, 200, 0.036900
+127.0.0.1, 2013-10-28 13:26:27, POST, /admin/default/edit/QuizMe/views/quizzes/take.html, HTTP/1.1, 200, 0.026899
+127.0.0.1, 2013-10-28 13:26:38, POST, /admin/default/edit/QuizMe/views/quizzes/take.html, HTTP/1.1, 200, 0.027373

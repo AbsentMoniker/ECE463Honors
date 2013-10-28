@@ -12,8 +12,11 @@
     {{for i in xrange(len(question.answers)):}}
         {{if results:}}
         <div style="font-weight:bold;display:inline;">{{=results[i]}}</div>
-        {{pass}}
         <li style="display:inline">{{=question.answers[i]}}</li><br />
+        {{else:}}
+         <li>{{=question.answers[i]}}</li>
+        {{pass}}
+        
     {{pass}}
     </ol>
     {{if question.active:}}
@@ -42,5 +45,3 @@
 {{if int(qnum) < len(quiz.questions):}}
     <a class="btn" href={{=URL('quizzes','take', vars={'id':quiz.id,'q':int(qnum)+1})}}>Next</a>
 {{pass}}
-{{=val}}
-{{=val2}}
