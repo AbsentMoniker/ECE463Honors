@@ -92,9 +92,11 @@ use_janrain(auth, filename='private/janrain.key')
 db.define_table('question',
                 Field('question','string'),
                 Field('answers','list:string'),
-                Field('correct', 'integer'))
+                Field('correct', 'integer'),
+                Field('active', 'boolean',default=False))
 
 db.define_table('quiz',
                 Field('name','string'),
                 Field('questions', 'list:integer'),
-                Field('author_id', 'string'))
+                Field('author_id', 'string'),
+                Field('active', 'boolean', default=False))

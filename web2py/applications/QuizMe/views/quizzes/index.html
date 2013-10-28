@@ -4,7 +4,13 @@
     Quizzes
 </h1>
 {{for quiz in quizzes:}}
-{{=A(quiz.name, _href=URL('quizzes','show', vars={'id':quiz.id}))  }} <br />
+{{=A(quiz.name, _href=URL('quizzes','show', vars={'id':quiz.id}))  }} 
+{{if quiz.active == False:}}
+<a class="btn" href={{= URL('quizzes','take',vars={'id':quiz.id, 'q':1}) }}>Start Quiz</a>
+{{else:}}
+<a class="btn" href={{= URL('quizzes','take',vars={'id':quiz.id})}}>End Quiz</a>
+{{pass}}
+<br />
 {{pass}}
 {{else:}}
 You have not created any quizzes!

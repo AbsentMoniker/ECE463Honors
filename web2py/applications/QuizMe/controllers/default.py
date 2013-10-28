@@ -3,9 +3,9 @@ from google.appengine.api import users
 def index():
     user = users.get_current_user()
     if user:
-        url = users.create_logout_url('/')
+        url = users.create_logout_url('/QuizMe')
     else:
-        url= users.create_login_url('/')
+        url= users.create_login_url('/QuizMe')
     return dict(user=user, url=url)
 
 

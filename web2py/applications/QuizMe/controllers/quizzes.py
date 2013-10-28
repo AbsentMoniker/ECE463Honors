@@ -69,3 +69,23 @@ def show():
     for i in xrange(len(quiz.questions)):
         questions.append(db(db.question.id == quiz.questions[i]).select()[0])
     return dict(quiz=quiz, questions=questions)
+
+def take():
+    quiz = db(db.quiz.id==request.get_vars['id']).select()[0]
+    activeQ = db(db.question.id==quiz.questions[int(request.get_vars['q'])-1]).select()[0]
+    status = ""
+    if users.get_current_user().user_id() == quiz.author_id:
+        owner = True
+
+        if request.vars.start:
+            activeQ.update_record(active=True)
+        if request.vars.stop:
+           activeQ.update_record(active=False)
+    else:
+        owner = False
+        if request.vars.submitAnswer:
+            if activeQ.active:
+                response.flash=T("Answer submitted!")
+            else:
+                response.flash=T("Answer not submitted - quiz not active")
+    return dict(quiz=quiz, question = activeQ, qnum=request.get_vars['q'], owner=owner)
