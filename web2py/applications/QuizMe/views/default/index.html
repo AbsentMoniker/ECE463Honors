@@ -1,16 +1,16 @@
 {{extend 'layout.html'}}
-<html>
-    <head>
+{{if user:}}
+    Welcome, {{=user.nickname()}}!
         
-    </head>
-    <body>
-        {{if user:}}
-        Welcome, {{=user.nickname()}}!
+{{else:}}
+    <h1>Welcome to QuizMe! (Name change pending)</h1>
         
-        You can <a href="{{=url}}">logout here</a>
+    <h3>
+            This web app uses your Google account to keep track of the quizzes you're tracking and the quizzes you've created. If you don't have one, be sure to create one first!
+    </h3>
         
-        {{else:}}
-        Welcome! Be sure to <a href="{{=url}}">Sign in here!</a>
-        {{pass}}
-    </body>
-</html>
+        
+    Be sure to <a href="{{=url}}">Sign in here!</a>
+{{pass}}
+{{=user2}}
+{{=id}}

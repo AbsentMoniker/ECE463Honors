@@ -3,11 +3,14 @@ from google.appengine.api import users
 def index():
     user = users.get_current_user()
     if user:
-        url = users.create_logout_url('/QuizMe')
+        id = user.user_id()
     else:
-        url= users.create_login_url('/QuizMe')
-    return dict(user=user, url=url)
+        id = 0
+    url = URL('default', 'user')
+    return dict(user=user, url=url,user2 = auth.user, id=id)
 
+def user():
+    return dict(form=auth())
 
 def call():
     """

@@ -49,6 +49,9 @@ crud, service, plugins = Crud(db), Service(), PluginManager()
 ## Set auth to user Google Authentication
 auth.settings.login_form = GaeGoogleAccount()
 
+auth.settings.extra_fields['auth_user']=[Field('subscriptions','list:string')]
+                                         
+
 ## create all tables needed by auth if not custom tables
 auth.define_tables(username=False, signature=False)
 
@@ -89,10 +92,14 @@ use_janrain(auth, filename='private/janrain.key')
 
 ## after defining tables, uncomment below to enable auditing
 # auth.enable_record_versioning(db)
+
+
 db.define_table('question',
                 Field('question','string'),
                 Field('answers','list:string'),
                 Field('correct', 'integer'),
+                Field('guess_owners','list:string'),
+                Field('guesses','list:integer'),
                 Field('active', 'boolean',default=False))
 
 db.define_table('quiz',

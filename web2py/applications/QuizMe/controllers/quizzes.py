@@ -74,18 +74,37 @@ def take():
     quiz = db(db.quiz.id==request.get_vars['id']).select()[0]
     activeQ = db(db.question.id==quiz.questions[int(request.get_vars['q'])-1]).select()[0]
     status = ""
-    if users.get_current_user().user_id() == quiz.author_id:
+    val=request.vars
+    userid = users.get_current_user().user_id()
+    results=[]
+    if userid == quiz.author_id:
         owner = True
 
         if request.vars.start:
             activeQ.update_record(active=True)
+            activeQ.update_record(guesses=[])
+            activeQ.update_record(guess_owners=[])
         if request.vars.stop:
-           activeQ.update_record(active=False)
+            activeQ.update_record(active=False)
+            for i in xrange(5):
+                results.append(activeQ.guesses.count(i))
     else:
         owner = False
         if request.vars.submitAnswer:
             if activeQ.active:
+                newguesses = activeQ.guesses
+                if userid in activeQ.guess_owners:
+                    ind = activeQ.guess_owners.index(userid)
+                    newguesses[ind]=int(request.vars.answer)
+                    activeQ.update_record(guesses=newguesses)
+                else:
+                    newguessowners = activeQ.guess_owners
+                    newguessowners.append(userid)
+                    newguesses.append(int(request.vars.answer))
+                    activeQ.update_record(guesses=newguesses)
+                    activeQ.update_record(guess_owners=newguessowners)
+                    
                 response.flash=T("Answer submitted!")
             else:
                 response.flash=T("Answer not submitted - quiz not active")
-    return dict(quiz=quiz, question = activeQ, qnum=request.get_vars['q'], owner=owner)
+    return dict(quiz=quiz, question = activeQ, qnum=request.get_vars['q'], owner=owner, results=results, val=activeQ.guesses, val2=activeQ.active)

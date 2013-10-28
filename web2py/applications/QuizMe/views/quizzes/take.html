@@ -9,8 +9,11 @@
 </h3>
 {{if owner==True:}}
     <ol type='a'>
-    {{for answer in question.answers:}}
-        <li>{{=answer}}</li>
+    {{for i in xrange(len(question.answers)):}}
+        {{if results:}}
+        <div style="font-weight:bold;display:inline;">{{=results[i]}}</div>
+        {{pass}}
+        <li style="display:inline">{{=question.answers[i]}}</li><br />
     {{pass}}
     </ol>
     {{if question.active:}}
@@ -19,11 +22,19 @@
         {{=FORM(INPUT(_value="Start", _name="start", _type="submit"))}}
     {{pass}}
 {{else:}}
+<!--
     {{letter='a'}}
     {{for answer in question.answers:}}
         {{=FORM(INPUT(_value=letter, _name="submitAnswer", _type="submit", _style="display:inline;"), _style="display:inline;")}} {{=answer}}<br />
         {{letter=chr(ord(letter)+1)}}
-    {{pass}}
+    {{pass}}-->
+{{=FORM(INPUT(_value='a', _name="submitAnswer", _type="submit", _style="display:inline;",_onclick='document.qform.answer.value="0";'),question.answers[0],BR(),
+        INPUT(_value='b', _name="submitAnswer", _type="submit", _style="display:inline;",_onclick='document.qform.answer.value="1";'),question.answers[1],BR(),
+        INPUT(_value='c', _name="submitAnswer", _type="submit", _style="display:inline;",_onclick='document.qform.answer.value="2";'),question.answers[2],BR(),
+        INPUT(_value='d', _name="submitAnswer", _type="submit", _style="display:inline;",_onclick='document.qform.answer.value="3";'),question.answers[3],BR(),
+        INPUT(_value='e', _name="submitAnswer", _type="submit", _style="display:inline;",_onclick='document.qform.answer.value="4";'),question.answers[4],
+        INPUT(_value="", _name="answer", _type="hidden"),_name="qform",)}}
+
 {{pass}}
 {{if int(qnum) > 1:}}
     <a class="btn" href={{=URL('quizzes','take', vars={'id':quiz.id,'q':int(qnum)-1})}}>Prev</a>
@@ -31,3 +42,5 @@
 {{if int(qnum) < len(quiz.questions):}}
     <a class="btn" href={{=URL('quizzes','take', vars={'id':quiz.id,'q':int(qnum)+1})}}>Next</a>
 {{pass}}
+{{=val}}
+{{=val2}}
