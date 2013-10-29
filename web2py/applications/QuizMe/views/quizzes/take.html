@@ -7,7 +7,7 @@
 <h3>
     {{=qnum}}) {{=question.question}}
 </h3>
-{{if owner==True:}}
+{{if owner:}}
     <ol type='a'>
     {{for i in xrange(len(question.answers)):}}
         {{if results:}}
@@ -44,4 +44,8 @@
 {{pass}}
 {{if int(qnum) < len(quiz.questions):}}
     <a class="btn" href={{=URL('quizzes','take', vars={'id':quiz.id,'q':int(qnum)+1})}}>Next</a>
+{{elif owner:}}
+<a class="btn" href={{=URL('quizzes','index',vars={'id':quiz.id},args=['stop'])}}>Done</a>
+{{else:}}
+<a class="btn" href={{=URL('default','index')}}>Done</a>
 {{pass}}

@@ -2,12 +2,31 @@ from google.appengine.api import users
 
 def index():
     user = users.get_current_user()
-    if user:
-        id = user.user_id()
-    else:
-        id = 0
     url = URL('default', 'user')
-    return dict(user=user, url=url,user2 = auth.user, id=id)
+    subscriptions=[]
+    form = FORM(INPUT(_name="newsubscription", _placeholder="Enter e-mail address...",requres=IS_NOT_EMPTY()),INPUT(_value="Add Subscription", _type="submit"))
+    if form.process().accepted:
+        newUser = db(db.auth_user.email==request.vars.newsubscription).select()
+        if newUser:
+            newList = auth.user.subscriptions
+            newList.append(newUser[0].id)
+            db(db.auth_user.id==auth.user_id).update(subscriptions=newList)
+            response.flash=T("Subscription added!")
+        else:
+            response.flash=T("ERROR - User not found")
+    if auth.user:
+        for subscription in auth.user.subscriptions:
+            sub = db(db.auth_user.id==subscription).select()[0]
+            quizzes = db(db.quiz.author_id==sub.id).select()
+            activeQuizzes = []
+            for quiz in quizzes:
+                #activeQuizzes.append(quiz)
+                if quiz.active:
+                    activeQuizzes.append(quiz)
+            subscriptions.append([sub.first_name, activeQuizzes])
+    else:
+        subscriptions=None
+    return dict(user=user, url=url, subscriptions=subscriptions, form=form)
 
 def user():
     return dict(form=auth())

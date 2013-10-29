@@ -1,29 +1,20 @@
 from google.appengine.api import users
 
 def index():
+    stopped = None
     if auth.is_logged_in():
+        if 'stop' in request.args:
+            db(db.quiz.id==request.get_vars['id']).update(active=False)
+            stopped=int(request.get_vars['id'])
         quizzes = db(db.quiz.author_id==auth.user.id).select(db.quiz.name)
-        return dict(quizzes=quizzes)
+        return dict(quizzes=quizzes,stopped=stopped)
     else:
         redirect(URL('default','user'))
         
 def create():
     form=FORM('Quiz Name:',
               INPUT(_name='name', requires=IS_NOT_EMPTY()),
-              
-              #DIV(
-              #     'Question 1:',
-              #    INPUT(_name='question', requires=IS_NOT_EMPTY()),
-              #    'Answers:',
-              #INPUT(_name='answer1_1', requires=IS_NOT_EMPTY()),
-              #INPUT(_name='answer1_2', requires=IS_NOT_EMPTY()),
-              #INPUT(_name='answer1_3', requires=IS_NOT_EMPTY()),
-              #INPUT(_name='answer1_4', requires=IS_NOT_EMPTY()),
-              #INPUT(_name='answer1_5', requires=IS_NOT_EMPTY(), _class="last"),
-              #_id='Q1',
-              #),
               INPUT(_value="Add Question", _type="submit")
-              #INPUT(_value="Submit Quiz", _name="quizSubmit", _type="submit")
               )
     if form.process().accepted:
         quizId = db.quiz.insert(name=request.vars.name,author_id=auth.user.id)
@@ -78,6 +69,8 @@ def take():
     results=[]
     if userid == quiz.author_id:
         owner = True
+        if not quiz.active:
+            db(db.quiz.id==request.get_vars['id']).update(active=True)
 
         if request.vars.start:
             activeQ.update_record(active=True)
@@ -89,6 +82,8 @@ def take():
                 results.append(activeQ.guesses.count(i))
     else:
         owner = False
+        if not quiz.active:
+            redirect(URL('default','index'))
         if request.vars.submitAnswer:
             if activeQ.active:
                 newguesses = activeQ.guesses
