@@ -1,5 +1,8 @@
 from google.appengine.api import users
+from google.appengine.ext import db as googledb
+from google.appengine.api.labs import taskqueue
 
+@auth.requires_login()
 def index():
     stopped = None
     if auth.is_logged_in():
@@ -10,7 +13,8 @@ def index():
         return dict(quizzes=quizzes,stopped=stopped)
     else:
         redirect(URL('default','user'))
-        
+
+@auth.requires_login()
 def create():
     form=FORM('Quiz Name:',
               INPUT(_name='name', requires=IS_NOT_EMPTY()),
@@ -21,6 +25,7 @@ def create():
         redirect(URL('quizzes','addquestion', vars={"id":quizId}))
     return dict(form=form)
 
+@auth.requires_login()
 def addquestion():
     form=FORM('Question:',
               INPUT(_name='question', requires=IS_NOT_EMPTY()),BR(),
@@ -51,6 +56,7 @@ def addquestion():
         redirect(URL('quizzes','index'))
     return dict(form=form, qnum=len(questions)+1, name=quiz[0].name)
 
+@auth.requires_login()
 def show():
     quiz = db(db.quiz.id==request.get_vars['id']).select()[0]
     if quiz.author_id != auth.user.id:
@@ -60,6 +66,27 @@ def show():
         questions.append(db(db.question.id == quiz.questions[i]).select()[0])
     return dict(quiz=quiz, questions=questions)
 
+
+#This function is used when submitting a guess so that all necessary operations are done in one transaction
+
+def submitGuess(qid, userid, answer):
+    activeQ = db(db.question.id==qid).select()[0]
+    newguesses = activeQ.guesses
+    if userid in activeQ.guess_owners:
+        ind = activeQ.guess_owners.index(userid)
+        print ind
+        newguesses[ind]=answer
+        activeQ.update_record(guesses=newguesses)
+        db.commit()
+    else:
+        newguessowners = activeQ.guess_owners
+        newguessowners.append(userid)
+        newguesses.append(answer)
+        activeQ.update_record(guesses=newguesses, guess_owners=newguessowners)
+        db.commit()
+    
+    
+@auth.requires_login()
 def take():
     quiz = db(db.quiz.id==request.get_vars['id']).select()[0]
     activeQ = db(db.question.id==quiz.questions[int(request.get_vars['q'])-1]).select()[0]
@@ -86,6 +113,7 @@ def take():
             redirect(URL('default','index'))
         if request.vars.submitAnswer:
             if activeQ.active:
+                '''
                 newguesses = activeQ.guesses
                 if userid in activeQ.guess_owners:
                     ind = activeQ.guess_owners.index(userid)
@@ -97,7 +125,10 @@ def take():
                     newguesses.append(int(request.vars.answer))
                     activeQ.update_record(guesses=newguesses)
                     activeQ.update_record(guess_owners=newguessowners)
-                    
+                '''    
+                options = googledb.create_transaction_options(propagation=googledb.ALLOWED)
+                googledb.run_in_transaction_options(options, submitGuess, quiz.questions[int(request.get_vars['q'])-1], unicode(userid), int(request.vars.answer))
+                
                 response.flash=T("Answer submitted!")
             else:
                 response.flash=T("Answer not submitted - quiz not active")

@@ -49,7 +49,7 @@ crud, service, plugins = Crud(db), Service(), PluginManager()
 ## Set auth to user Google Authentication
 auth.settings.login_form = GaeGoogleAccount()
 
-auth.settings.extra_fields['auth_user']=[Field('subscriptions','list:string')]
+auth.settings.extra_fields['auth_user']=[Field('subscriptions','list:string', readable=False, writable=False)]
                                          
 
 ## create all tables needed by auth if not custom tables
