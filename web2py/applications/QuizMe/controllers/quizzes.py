@@ -68,7 +68,6 @@ def show():
 
 
 #This function is used when submitting a guess so that all necessary operations are done in one transaction
-
 def submitGuess(qid, userid, answer):
     activeQ = db(db.question.id==qid).select()[0]
     newguesses = activeQ.guesses
@@ -91,7 +90,6 @@ def take():
     quiz = db(db.quiz.id==request.get_vars['id']).select()[0]
     activeQ = db(db.question.id==quiz.questions[int(request.get_vars['q'])-1]).select()[0]
     status = ""
-    val=request.vars
     userid = auth.user.id
     results=[]
     if userid == quiz.author_id:
@@ -113,23 +111,25 @@ def take():
             redirect(URL('default','index'))
         if request.vars.submitAnswer:
             if activeQ.active:
-                '''
-                newguesses = activeQ.guesses
-                if userid in activeQ.guess_owners:
-                    ind = activeQ.guess_owners.index(userid)
-                    newguesses[ind]=int(request.vars.answer)
-                    activeQ.update_record(guesses=newguesses)
-                else:
-                    newguessowners = activeQ.guess_owners
-                    newguessowners.append(userid)
-                    newguesses.append(int(request.vars.answer))
-                    activeQ.update_record(guesses=newguesses)
-                    activeQ.update_record(guess_owners=newguessowners)
-                '''    
                 options = googledb.create_transaction_options(propagation=googledb.ALLOWED)
                 googledb.run_in_transaction_options(options, submitGuess, quiz.questions[int(request.get_vars['q'])-1], unicode(userid), int(request.vars.answer))
-                
                 response.flash=T("Answer submitted!")
             else:
                 response.flash=T("Answer not submitted - quiz not active")
-    return dict(quiz=quiz, question = activeQ, qnum=request.get_vars['q'], owner=owner, results=results, val=activeQ.guesses, val2=activeQ.active)
+    return dict(quiz=quiz, question = activeQ, qnum=request.get_vars['q'], owner=owner,results=results)
+
+def test():
+    print "Function called!"
+    
+def activateQ():
+    print "Function called!"
+    activeQ = db(db.question.id==int(request.vars.qId)).select()[0]
+    activeQ.update_record(active=True)
+    activeQ.update_record(guesses=[])
+    activeQ.update_record(guess_owners=[])
+    return '<input type="button" value="Stop" name="qControlBtn" class="btn" onclick="stopQ();" />'
+
+def endQ():
+    activeQ = db(db.question.id==int(request.vars.qId)).select()[0]
+    activeQ.update_record(active=False)
+    return '<input type="button" value="Start" name="qControlBtn" class="btn" onclick="startQ();" />'

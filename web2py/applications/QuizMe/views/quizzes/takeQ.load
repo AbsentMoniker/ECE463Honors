@@ -1,4 +1,3 @@
-{{extend 'layout.html'}}
 <h1>
     {{=quiz.name}}
 </h1>
@@ -12,30 +11,16 @@
         <div style="font-weight:bold;display:inline;">{{=results[i]}}</div>
         <li style="display:inline">{{=question.answers[i]}}</li><br />
         {{else:}}
-       <li>{{=question.answers[i]}}</li>
-        <div style="font-weight:bold;" class="result{{=i}} hidden">Test</div>
+         <li>{{=question.answers[i]}}</li>
         {{pass}}
         
     {{pass}}
     </ol>
-<script type="text/javascript">
-    function startQ(){
-        ajax('activateQ?qId={{=question.id}}',[], 'quizControl');
-    }
-    function stopQ(){
-        ajax('endQ?qId={{=question.id}}',[], 'quizControl');
-        for (var i = 0; i < {{=len(question.answers)}};i++){
-            jQuery('.result'.concat(i)).slideToggle();
-        }
-    }
-    </script>
-    <div id="quizControl">
     {{if question.active:}}
-        <input type="button" value="Stop" name="qControlBtn" class="btn" onclick="stopQ();" />
+        {{=FORM(INPUT(_value="Stop", _name="stop", _type="submit"))}}
     {{else:}}
-        <input type="button" value="Start" name="qControlBtn" class="btn" onclick="startQ();" />
+        {{=FORM(INPUT(_value="Start", _name="start", _type="submit"))}}
     {{pass}}
-    </div>    
 {{else:}}
 <!--
     {{letter='a'}}
