@@ -41,20 +41,27 @@
     {{pass}}
     </div>    
 {{else:}}
-<!--
-    {{letter='a'}}
-    {{for answer in question.answers:}}
-        {{=FORM(INPUT(_value=letter, _name="submitAnswer", _type="submit", _style="display:inline;"), _style="display:inline;")}} {{=answer}}<br />
-        {{letter=chr(ord(letter)+1)}}
-    {{pass}}-->
-{{=FORM(INPUT(_value='a', _name="submitAnswer", _type="submit", _style="display:inline;",_onclick='document.qform.answer.value="0";'),question.answers[0],BR(),
+<script type="text/javascript">
+    function submitGuess(guess){
+        ajax('submitAnswer?qId={{=question.id}}&user={{auth.user.id}}&guess='.concat(guess),[],'status');
+    }
+</script>
+{{letter='a'}}
+{{for i in xrange(len(question.answers)):}}
+<input value={{=letter}} type="button" class="btn" style="display:inline;" onclick="submitGuess({{=i}});"/> {{=question.answers[i]}}<br />
+{{letter=chr(ord(letter)+1)}}
+{{pass}}
+<!--{{=FORM(INPUT(_value='a', _name="submitAnswer", _type="submit", _style="display:inline;",_onclick='document.qform.answer.value="0";'),question.answers[0],BR(),
         INPUT(_value='b', _name="submitAnswer", _type="submit", _style="display:inline;",_onclick='document.qform.answer.value="1";'),question.answers[1],BR(),
         INPUT(_value='c', _name="submitAnswer", _type="submit", _style="display:inline;",_onclick='document.qform.answer.value="2";'),question.answers[2],BR(),
         INPUT(_value='d', _name="submitAnswer", _type="submit", _style="display:inline;",_onclick='document.qform.answer.value="3";'),question.answers[3],BR(),
         INPUT(_value='e', _name="submitAnswer", _type="submit", _style="display:inline;",_onclick='document.qform.answer.value="4";'),question.answers[4],
-        INPUT(_value="", _name="answer", _type="hidden"),_name="qform",)}}
+        INPUT(_value="", _name="answer", _type="hidden"),_name="qform",)}}-->
 
 {{pass}}
+<div id='status'>
+    
+</div>
 {{if int(qnum) > 1:}}
     <a class="btn" href={{=URL('quizzes','take', vars={'id':quiz.id,'q':int(qnum)-1})}}>Prev</a>
 {{pass}}

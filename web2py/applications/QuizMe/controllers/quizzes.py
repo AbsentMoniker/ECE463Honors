@@ -96,15 +96,6 @@ def take():
         owner = True
         if not quiz.active:
             db(db.quiz.id==request.get_vars['id']).update(active=True)
-
-        if request.vars.start:
-            activeQ.update_record(active=True)
-            activeQ.update_record(guesses=[])
-            activeQ.update_record(guess_owners=[])
-        if request.vars.stop:
-            activeQ.update_record(active=False)
-            for i in xrange(5):
-                results.append(activeQ.guesses.count(i))
     else:
         owner = False
         if not quiz.active:
@@ -136,3 +127,13 @@ def getResults():
     for i in xrange(len(activeQ.answers)):
         command += "jQuery('.result%s').text(%s);"%(i, activeQ.guesses.count(i))
     return command
+
+def submitAnswer():
+    activeQ = db(db.question.id==int(request.vars.qId)).select()[0]
+    if activeQ.active:
+        options = googledb.create_transaction_options(propagation=googledb.ALLOWED)
+        googledb.run_in_transaction_options(options, submitGuess, int(request.vars.qId), unicode(auth.user.id), int(request.vars.guess))
+        result = "Submitted Guess: %c"%(chr(ord('a')+int(request.vars.guess)))
+    else:
+        result = "Quiz not active - try again in a bit!"
+    return result
