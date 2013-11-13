@@ -21,11 +21,15 @@
 <script type="text/javascript">
     function startQ(){
         ajax('activateQ?qId={{=question.id}}',[], 'quizControl');
+        for (var i = 0; i < {{=len(question.answers)}};i++){
+            jQuery('.result'.concat(i)).slideUp();
+        }
     }
     function stopQ(){
         ajax('endQ?qId={{=question.id}}',[], 'quizControl');
+        ajax('getResults?qId={{=question.id}}',[], ':eval');
         for (var i = 0; i < {{=len(question.answers)}};i++){
-            jQuery('.result'.concat(i)).slideToggle();
+            jQuery('.result'.concat(i)).slideDown();
         }
     }
     </script>

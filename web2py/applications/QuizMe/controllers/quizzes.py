@@ -118,11 +118,7 @@ def take():
                 response.flash=T("Answer not submitted - quiz not active")
     return dict(quiz=quiz, question = activeQ, qnum=request.get_vars['q'], owner=owner,results=results)
 
-def test():
-    print "Function called!"
-    
 def activateQ():
-    print "Function called!"
     activeQ = db(db.question.id==int(request.vars.qId)).select()[0]
     activeQ.update_record(active=True)
     activeQ.update_record(guesses=[])
@@ -133,3 +129,10 @@ def endQ():
     activeQ = db(db.question.id==int(request.vars.qId)).select()[0]
     activeQ.update_record(active=False)
     return '<input type="button" value="Start" name="qControlBtn" class="btn" onclick="startQ();" />'
+
+def getResults():
+    activeQ = db(db.question.id==int(request.vars.qId)).select()[0]
+    command = ""
+    for i in xrange(len(activeQ.answers)):
+        command += "jQuery('.result%s').text(%s);"%(i, activeQ.guesses.count(i))
+    return command
