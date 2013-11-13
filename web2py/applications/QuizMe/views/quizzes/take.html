@@ -51,13 +51,6 @@
 <input value={{=letter}} type="button" class="btn" style="display:inline;" onclick="submitGuess({{=i}});"/> {{=question.answers[i]}}<br />
 {{letter=chr(ord(letter)+1)}}
 {{pass}}
-<!--{{=FORM(INPUT(_value='a', _name="submitAnswer", _type="submit", _style="display:inline;",_onclick='document.qform.answer.value="0";'),question.answers[0],BR(),
-        INPUT(_value='b', _name="submitAnswer", _type="submit", _style="display:inline;",_onclick='document.qform.answer.value="1";'),question.answers[1],BR(),
-        INPUT(_value='c', _name="submitAnswer", _type="submit", _style="display:inline;",_onclick='document.qform.answer.value="2";'),question.answers[2],BR(),
-        INPUT(_value='d', _name="submitAnswer", _type="submit", _style="display:inline;",_onclick='document.qform.answer.value="3";'),question.answers[3],BR(),
-        INPUT(_value='e', _name="submitAnswer", _type="submit", _style="display:inline;",_onclick='document.qform.answer.value="4";'),question.answers[4],
-        INPUT(_value="", _name="answer", _type="hidden"),_name="qform",)}}-->
-
 {{pass}}
 <div id='status'>
     

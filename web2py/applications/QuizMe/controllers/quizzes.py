@@ -57,6 +57,37 @@ def addquestion():
     return dict(form=form, qnum=len(questions)+1, name=quiz[0].name)
 
 @auth.requires_login()
+def editquestion():
+    quiz = db(db.quiz.id==request.vars.quiz).select()[0]
+    if quiz.author_id != auth.user.id:
+        redirect('/QuizMe/quizzes')
+    question = db(db.question.id == quiz.questions[int(request.vars.qnum)-1]).select()[0]
+    form = FORM('Question:',
+              INPUT(_name='question', _value=question.question, requires=IS_NOT_EMPTY()),BR(),
+              'Answers:',BR(),
+              INPUT(_name='answer0', _value = question.answers[0], requres=IS_NOT_EMPTY()),BR(),
+              INPUT(_name='answer1', _value = question.answers[1], requires=IS_NOT_EMPTY()),BR(),
+              INPUT(_name='answer2', _value = question.answers[2], requires=IS_NOT_EMPTY()),BR(),
+              INPUT(_name='answer3', _value = question.answers[3], requires=IS_NOT_EMPTY()),BR(),
+              INPUT(_name='answer4', _value = question.answers[4], requires=IS_NOT_EMPTY()),BR(),
+              INPUT(_value="Save Changes", _name="questionEdit", _type="submit"),
+              )
+    if request.vars.questionEdit and form.process().accepted:
+        db(db.question.id == quiz.questions[int(request.vars.qnum)-1]).update(question=request.vars.question)
+        newAnswers = [request.vars.answer0, request.vars.answer1,
+                           request.vars.answer2, request.vars.answer3,
+                           request.vars.answer4]
+        db(db.question.id == quiz.questions[int(request.vars.qnum)-1]).update(answers = newAnswers)
+    nextButton = None
+    prevButton = None
+    if int(request.vars.qnum) > 1:
+        prevButton = A(_href=URL('quizzes','editquestion',vars={'quiz':request.vars.quiz, 'qnum':int(request.vars.qnum)-1}), _class="btn", _value="Prev")
+    if int(request.vars.qnum) < len(quiz.questions):
+        nextButton = A(_href=URL('quizzes','editquestion',vars={'quiz':request.vars.quiz, 'qnum':int(request.vars.qnum)+1}), _class="btn", _value="Next")
+    return dict(name = quiz.name, form=form, qnum=request.vars.qnum, prevButton=prevButton, nextButton=nextButton)
+        
+    
+@auth.requires_login()
 def show():
     quiz = db(db.quiz.id==request.get_vars['id']).select()[0]
     if quiz.author_id != auth.user.id:

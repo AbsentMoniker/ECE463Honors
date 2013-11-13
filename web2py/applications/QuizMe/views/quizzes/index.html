@@ -7,6 +7,7 @@
 {{=A(quiz.name, _href=URL('quizzes','show', vars={'id':quiz.id}))  }} 
 {{if not quiz.active or quiz.id==stopped:}}
 <a class="btn" href={{= URL('quizzes','take',vars={'id':quiz.id, 'q':1}) }}>Start Quiz</a>
+<a class="btn" href={{= URL('quizzes','editquestion', vars={'quiz':quiz.id, 'qnum':1})}}>Edit Quiz</a>
 {{else:}}
 <a class="btn" href={{= URL('quizzes','index',vars={'id':quiz.id}, args=['stop'])}}>End Quiz</a>
 {{pass}}
