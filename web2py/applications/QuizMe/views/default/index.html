@@ -1,42 +1,14 @@
 {{extend 'layout.html'}}
-{{if user:}}
-    Welcome, {{=user.nickname()}}!<br /><br />
+{{if auth.user:}}
+{{=LOAD('default', 'home.load', ajax=True)}}
 
-    {{if not subscriptions:}}
-        You haven't subscribed to any users!<br />
-        Add the e-mail of a user below to subscribe: <br />
-        {{=form}}
-    {{else:}}
-        <h2>
-            Subscriptions
-</h2>
-        {{for subscription in subscriptions:}}
-            {{if subscription[1]:}}
-                <h5>
-                    {{=subscription[0]}}'s Active Quizzes:<br />
-                </h5>
-                <ul>
-                {{for quiz in subscription[1]:}}
-                    <li><a href={{=URL('quizzes','take',vars={'id':quiz.id,'q':1})}}>{{=quiz.name}}</a></li>
-                {{pass}}
-                </ul>
-            {{else:}}
-                <h5>{{=subscription[0]}} does not have any active quizzes.</h5>
-            {{pass}}
-        {{pass}}
-<br /><br />
-<h3>
-    Add Subscription: {{=form}}
-</h3>
-
-    {{pass}}
 {{else:}}
-    <h1>Welcome to QuizMe! (Name change pending)</h1>
+<h1>Welcome to QuizMe!</h1>
         
     <h3>
             This web app uses your Google account to keep track of the quizzes you're tracking and the quizzes you've created. If you don't have one, be sure to create one first!
     </h3>
         
         
-    Be sure to <a href="{{=url}}">Sign in here!</a>
+    Be sure to <a href="{{=URL('default', 'user')}}">Sign in here!</a>
 {{pass}}

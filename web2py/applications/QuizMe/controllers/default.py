@@ -1,19 +1,33 @@
 from google.appengine.api import users
 
+def set_mode():
+    print "setting mode to: %s"%request.vars.mode
+    session.mode = request.vars.mode
+    return "submit();"
+
 def index():
-    user = users.get_current_user()
+    return dict()
+
+def home():
     url = URL('default', 'user')
+    if request.vars.mode:
+        session.mode = request.vars.mode
+    currentMode = request.vars.mode if request.vars.mode else session.mode
+    if currentMode == "professor":
+        redirect(URL("quizzes","index", extension="html"), client_side=True)
+    user = users.get_current_user()
     subscriptions=[]
-    form = FORM(INPUT(_name="newsubscription", _placeholder="Enter e-mail address...",requres=IS_NOT_EMPTY()),INPUT(_value="Add Subscription", _type="submit"))
+    form = FORM(INPUT(_name="newsubscription", _placeholder="Enter professor e-mail address...",requres=IS_NOT_EMPTY()),INPUT(_value="Add Subscription", _type="submit"))
+    
     if form.process().accepted:
         newUser = db(db.auth_user.email==request.vars.newsubscription).select()
         if newUser:
             newList = auth.user.subscriptions
             newList.append(newUser[0].id)
             db(db.auth_user.id==auth.user_id).update(subscriptions=newList)
-            response.flash=T("Subscription added!")
+            response.flash=T("Professor added!")
         else:
-            response.flash=T("ERROR - User not found")
+            response.flash=T("ERROR - Professor not found")
     if auth.user:
         for subscription in auth.user.subscriptions:
             sub = db(db.auth_user.id==subscription).select()[0]
@@ -26,7 +40,7 @@ def index():
             subscriptions.append([sub.first_name, activeQuizzes])
     else:
         subscriptions=None
-    return dict(user=user, url=url, subscriptions=subscriptions, form=form)
+    return dict(user=user, url=url, subscriptions=subscriptions, form=form, mode=request.vars.mode)
 
 def user():
     return dict(form=auth())

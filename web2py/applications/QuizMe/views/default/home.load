@@ -1,0 +1,53 @@
+{{if session.mode or mode:}}
+{{currentMode = session.mode if session.mode else mode}}
+    {{if not subscriptions:}}
+        You haven't added any professors!<br />
+        Add the e-mail of your professor below: <br />
+        {{=form}}
+    {{else:}}
+        <h2>
+        Professors Added
+        </h2>
+        {{for subscription in subscriptions:}}
+           {{if subscription[1]:}}
+                <h5>
+                    {{=subscription[0]}}'s Active Quizzes:<br />
+                </h5>
+                <ul>
+                {{for quiz in subscription[1]:}}
+                    <li><a href={{=URL('quizzes','take',vars={'id':quiz.id,'q':1})}}>{{=quiz.name}}</a></li>
+                {{pass}}
+                </ul>
+            {{else:}}
+                <h5>{{=subscription[0]}} does not have any active quizzes.</h5>
+            {{pass}}
+        {{pass}}
+        <br /><br />
+        <h3>
+        Add Professor: {{=form}}
+        </h3>
+{{pass}}
+{{else:}}
+<div id="result">
+<script type="text/javascript">
+    $().ready(function(){
+        $('input[type=submit]').click(function(){
+            $('#mode').val($(this).attr('name'));
+        });
+    $('form').submit(function(){
+    console.info($(this).serialize());
+    return false;
+  })
+});
+   
+</script>
+    <h3>
+    What is your role?
+    </h3>
+    <form>
+    <input type="hidden" id="mode" name="mode" />
+    <input value="Student" type="submit" class="btn" name="student" />
+    <input value="Professor" type="submit" class="btn" name="professor" />
+    </form>
+</div>
+{{pass}}
