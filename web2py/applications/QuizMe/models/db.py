@@ -106,5 +106,5 @@ db.define_table('quiz',
                 Field('name','string'),
                 Field('questions', 'list:reference question'),
                 Field('author_id', 'reference auth_user'),
-                Field('password', 'string'),
+                Field('password', 'string', readable=False),
                 Field('active', 'boolean', default=False))

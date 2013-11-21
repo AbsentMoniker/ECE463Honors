@@ -1,4 +1,9 @@
 {{if session.mode or mode:}}
+<script type="text/javascript">
+    function checkPass(id){
+        ajax("checkpass?quiz=".concat(id),[id],':eval');
+    }          
+</script>
 {{currentMode = session.mode if session.mode else mode}}
     {{if not subscriptions:}}
         You haven't added any professors!<br />
@@ -15,7 +20,11 @@
                 </h5>
                 <ul>
                 {{for quiz in subscription[1]:}}
-                    <li><a href={{=URL('quizzes','take',vars={'id':quiz.id,'q':1})}}>{{=quiz.name}}</a></li>
+                    {{if quiz[1]:}}
+                    <li><input type="button" class="btn" value="{{=quiz[0].name}}" onclick="jQuery('.{{=quiz[0].id}}').slideToggle();"/><input name="{{=quiz[0].id}}" class="hidden {{=quiz[0].id}}" id={{=quiz[0].id}} placeholder="Enter password"><input type="button" class="btn hidden {{=quiz[0].id}}" value="submit" id={{=quiz[0].id}} onclick="checkPass({{=quiz[0].id}});"/></li>
+                    {{else:}}
+                    <li><a class="btn" href="{{=URL('quizzes','take',vars={'id':quiz[0].id,'q':1})}}"> {{=quiz[0].name}} </a></li>
+                    {{pass}}
                 {{pass}}
                 </ul>
             {{else:}}

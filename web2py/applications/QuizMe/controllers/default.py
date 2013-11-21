@@ -5,6 +5,13 @@ def set_mode():
     session.mode = request.vars.mode
     return "submit();"
 
+def checkpass():
+    quiz = db(db.quiz.id==int(request.vars.quiz)).select()[0]
+    if quiz.password == request.vars["%d"%quiz.id]:
+        redirect(URL('quizzes','take',vars={'id':quiz.id,'q':1}, extension="html"), client_side=True)
+        return
+    else:
+        return "jQuery('.flash').html('Password Incorrect').slideDown()"
 def index():
     return dict()
 
@@ -36,7 +43,7 @@ def home():
             for quiz in quizzes:
                 #activeQuizzes.append(quiz)
                 if quiz.active:
-                    activeQuizzes.append(quiz)
+                    activeQuizzes.append((quiz, quiz.password!=None))
             subscriptions.append([sub.first_name, activeQuizzes])
     else:
         subscriptions=None

@@ -17,11 +17,12 @@ def index():
 @auth.requires_login()
 def create():
     form=FORM('Quiz Name:',
-              INPUT(_name='name', requires=IS_NOT_EMPTY()),
+              INPUT(_name='name', requires=IS_NOT_EMPTY()),BR(),'Password:',
+              INPUT(_name='password'),
               INPUT(_value="Add Question", _type="submit")
               )
     if form.process().accepted:
-        quizId = db.quiz.insert(name=request.vars.name,author_id=auth.user.id)
+        quizId = db.quiz.insert(name=request.vars.name,author_id=auth.user.id, password=request.vars.password)
         redirect(URL('quizzes','addquestion', vars={"id":quizId}))
     return dict(form=form)
 
@@ -166,5 +167,5 @@ def submitAnswer():
         googledb.run_in_transaction_options(options, submitGuess, int(request.vars.qId), unicode(auth.user.id), int(request.vars.guess))
         result = "Submitted Guess: %c"%(chr(ord('a')+int(request.vars.guess)))
     else:
-        result = "Quiz not active - try again in a bit!"
+        result = "Question not active - try again in a bit!"
     return result
