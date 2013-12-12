@@ -23,39 +23,74 @@ def create():
               )
     if form.process().accepted:
         quizId = db.quiz.insert(name=request.vars.name,author_id=auth.user.id, password=request.vars.password)
-        redirect(URL('quizzes','addquestion', vars={"id":quizId}))
+        redirect(URL('quizzes','addquestion', vars={"id":quizId, 'qnum':1}))
     return dict(form=form)
 
 @auth.requires_login()
 def addquestion():
-    form=FORM('Question:',
-              INPUT(_name='question', requires=IS_NOT_EMPTY()),BR(),
-              'Answers:',BR(),
-              INPUT(_name='answer1', requres=IS_NOT_EMPTY()),BR(),
-              INPUT(_name='answer2', requires=IS_NOT_EMPTY()),BR(),
-              INPUT(_name='answer3', requires=IS_NOT_EMPTY()),BR(),
-              INPUT(_name='answer4', requires=IS_NOT_EMPTY()),BR(),
-              INPUT(_name='answer5', requires=IS_NOT_EMPTY()),BR(),
-              INPUT(_value="Add Question", _name="questionAdd", _type="submit"),
-              INPUT(_value="Done Creating Quiz", _name="quizSubmit", _type="submit")
-              )
-    quiz = False
-    while not quiz:
-        quiz = db(db.quiz.id == request.vars.id).select()
-        if quiz:
-            questions = quiz[0].questions
-            if form.process().accepted:
-                answers = [request.vars.answer1, request.vars.answer2,
-                           request.vars.answer3, request.vars.answer4,
-                           request.vars.answer5]
-                questionId = db.question.insert(question=request.vars.question,
-                                                answers=answers,
-                                                correct = 0)
-                questions.append(questionId)
-                db(db.quiz.id == request.vars.id).update(questions=questions)
-    if (request.vars.quizSubmit):
-        redirect(URL('quizzes','index'))
-    return dict(form=form, qnum=len(questions)+1, name=quiz[0].name)
+    if 'edit' in request.args:
+        form=FORM('Question:',
+                  INPUT(_name='question', requires=IS_NOT_EMPTY()),BR(),
+                  'Answers:',BR(),
+                  INPUT(_name='answer1', requres=IS_NOT_EMPTY()),BR(),
+                  INPUT(_name='answer2', requires=IS_NOT_EMPTY()),BR(),
+                  INPUT(_name='answer3', requires=IS_NOT_EMPTY()),BR(),
+                  INPUT(_name='answer4', requires=IS_NOT_EMPTY()),BR(),
+                  INPUT(_name='answer5', requires=IS_NOT_EMPTY()),BR(),
+                  INPUT(_value="Add Question", _name="questionAdd", _type="submit"),
+                  )
+        qnum = int(request.vars.qnum)
+        quiz = False
+        while not quiz:
+            quiz = db(db.quiz.id == request.vars.id).select()
+            if quiz:
+                questions = quiz[0].questions
+                if form.process().accepted:
+                    print "Got here!"
+                    answers = [request.vars.answer1, request.vars.answer2,
+                               request.vars.answer3, request.vars.answer4,
+                               request.vars.answer5]
+                    print request.vars.question
+                    print answers
+                    questionId = db.question.insert(question=request.vars.question,
+                                                    answers=answers,
+                                                    correct = 0)
+                    questions.insert(int(request.vars.qnum)-1,questionId)
+                    db(db.quiz.id == request.vars.id).update(questions=questions)
+                    redirect(URL('quizzes','editquestion',vars={'quiz':request.vars.id, 'qnum':request.vars.qnum}))
+        if (request.vars.quizSubmit):
+            redirect(URL('quizzes','index'))
+    else:
+        form=FORM('Question:',
+                  INPUT(_name='question', requires=IS_NOT_EMPTY()),BR(),
+                  'Answers:',BR(),
+                  INPUT(_name='answer1', requres=IS_NOT_EMPTY()),BR(),
+                  INPUT(_name='answer2', requires=IS_NOT_EMPTY()),BR(),
+                  INPUT(_name='answer3', requires=IS_NOT_EMPTY()),BR(),
+                  INPUT(_name='answer4', requires=IS_NOT_EMPTY()),BR(),
+                  INPUT(_name='answer5', requires=IS_NOT_EMPTY()),BR(),
+                  INPUT(_value="Add Question", _name="questionAdd", _type="submit"),
+                  INPUT(_value="Done Creating Quiz", _name="quizSubmit", _type="submit")
+                  )
+       
+        quiz = False
+        while not quiz:
+            quiz = db(db.quiz.id == request.vars.id).select()
+            if quiz:
+                questions = quiz[0].questions
+                if form.process().accepted:
+                    answers = [request.vars.answer1, request.vars.answer2,
+                               request.vars.answer3, request.vars.answer4,
+                               request.vars.answer5]
+                    questionId = db.question.insert(question=request.vars.question,
+                                                    answers=answers,
+                                                    correct = 0)
+                    questions.append(questionId)
+                    db(db.quiz.id == request.vars.id).update(questions=questions)
+        qnum = len(questions)+1
+        if (request.vars.quizSubmit):
+            redirect(URL('quizzes','index'))
+    return dict(form=form, qnum=qnum, name=quiz[0].name)
 
 @auth.requires_login()
 def editquestion():
@@ -63,17 +98,38 @@ def editquestion():
     if quiz.author_id != auth.user.id:
         redirect('/QuizMe/quizzes')
     question = db(db.question.id == quiz.questions[int(request.vars.qnum)-1]).select()[0]
-    form = FORM('Question:',
-              INPUT(_name='question', _value=question.question, requires=IS_NOT_EMPTY()),BR(),
-              'Answers:',BR(),
-              INPUT(_name='answer0', _value = question.answers[0], requres=IS_NOT_EMPTY()),BR(),
-              INPUT(_name='answer1', _value = question.answers[1], requires=IS_NOT_EMPTY()),BR(),
-              INPUT(_name='answer2', _value = question.answers[2], requires=IS_NOT_EMPTY()),BR(),
-              INPUT(_name='answer3', _value = question.answers[3], requires=IS_NOT_EMPTY()),BR(),
-              INPUT(_name='answer4', _value = question.answers[4], requires=IS_NOT_EMPTY()),BR(),
-              INPUT(_value="Save Changes", _name="questionEdit", _type="submit"),
-              )
-    if request.vars.questionEdit and form.process().accepted:
+    if request.vars.questionEdit:
+        form = FORM('Question:',
+                  INPUT(_name='question', _value=request.vars.question, requires=IS_NOT_EMPTY()),BR(),
+                  'Answers:',BR(),
+                  INPUT(_name='answer0', _value = request.vars.answer0, requres=IS_NOT_EMPTY()),BR(),
+                  INPUT(_name='answer1', _value = request.vars.answer1, requires=IS_NOT_EMPTY()),BR(),
+                  INPUT(_name='answer2', _value = request.vars.answer2, requires=IS_NOT_EMPTY()),BR(),
+                  INPUT(_name='answer3', _value = request.vars.answer3, requires=IS_NOT_EMPTY()),BR(),
+                  INPUT(_name='answer4', _value = request.vars.answer4, requires=IS_NOT_EMPTY()),BR(),
+                  INPUT(_value="Save Changes", _name="questionEdit", _type="submit"),
+                  )
+    else:
+        form = FORM('Question:',
+                  INPUT(_name='question', _value=question.question, requires=IS_NOT_EMPTY()),BR(),
+                  'Answers:',BR(),
+                  INPUT(_name='answer0', _value = question.answers[0], requres=IS_NOT_EMPTY()),BR(),
+                  INPUT(_name='answer1', _value = question.answers[1], requires=IS_NOT_EMPTY()),BR(),
+                  INPUT(_name='answer2', _value = question.answers[2], requires=IS_NOT_EMPTY()),BR(),
+                  INPUT(_name='answer3', _value = question.answers[3], requires=IS_NOT_EMPTY()),BR(),
+                  INPUT(_name='answer4', _value = question.answers[4], requires=IS_NOT_EMPTY()),BR(),
+                  INPUT(_value="Save Changes", _name="questionEdit", _type="submit"),
+                  )
+    if request.vars.questionDelete:
+        deleteQuestion(quiz, int(request.vars.qnum))
+        session.flash = "Question deleted"
+        if int(request.vars.qnum) == 1:
+            redirect(URL('quizzes', 'editquestion', vars={'quiz':request.vars.quiz, 'qnum':int(request.vars.qnum)}))
+        else:
+            redirect(URL('quizzes', 'editquestion', vars={'quiz':request.vars.quiz, 'qnum':int(request.vars.qnum)-1}))
+    result =  form.process().accepted
+    if request.vars.questionEdit and result:
+        print "New question: %s"%request.vars.question
         db(db.question.id == quiz.questions[int(request.vars.qnum)-1]).update(question=request.vars.question)
         newAnswers = [request.vars.answer0, request.vars.answer1,
                            request.vars.answer2, request.vars.answer3,
@@ -81,11 +137,18 @@ def editquestion():
         db(db.question.id == quiz.questions[int(request.vars.qnum)-1]).update(answers = newAnswers)
     nextButton = None
     prevButton = None
+    deleteButton = None
+    
+    insertButtonBefore = A("Add New Question Before", _href=URL('quizzes','addquestion',vars={'id':request.vars.quiz, 'qnum':int(request.vars.qnum)},args=['edit']), _class="btn")
+    insertButtonAfter = A("Add New Question After", _href=URL('quizzes','addquestion',vars={'id':request.vars.quiz, 'qnum':int(request.vars.qnum)+1},args=['edit']), _class="btn")
+    if len(quiz.questions) > 1:
+        deleteButton = FORM(INPUT(_value="Delete",_type="submit", _class="btn",_name="questionDelete"))
     if int(request.vars.qnum) > 1:
-        prevButton = A(_href=URL('quizzes','editquestion',vars={'quiz':request.vars.quiz, 'qnum':int(request.vars.qnum)-1}), _class="btn", _value="Prev")
+        prevButton = A("Prev",_href=URL('quizzes','editquestion',vars={'quiz':request.vars.quiz, 'qnum':int(request.vars.qnum)-1}), _class="btn")
     if int(request.vars.qnum) < len(quiz.questions):
-        nextButton = A(_href=URL('quizzes','editquestion',vars={'quiz':request.vars.quiz, 'qnum':int(request.vars.qnum)+1}), _class="btn", _value="Next")
-    return dict(name = quiz.name, form=form, qnum=request.vars.qnum, prevButton=prevButton, nextButton=nextButton)
+        nextButton = A("Next",_href=URL('quizzes','editquestion',vars={'quiz':request.vars.quiz, 'qnum':int(request.vars.qnum)+1}), _class="btn")
+    return dict(name = quiz.name, form=form, qnum=request.vars.qnum, prevButton=prevButton, nextButton=nextButton,insertButtonBefore=insertButtonBefore,
+                insertButtonAfter = insertButtonAfter, deleteButton=deleteButton)
         
     
 @auth.requires_login()
@@ -98,7 +161,15 @@ def show():
         questions.append(db(db.question.id == quiz.questions[i]).select()[0])
     return dict(quiz=quiz, questions=questions)
 
-
+@auth.requires_login()
+def delete():
+    quiz = db(db.quiz.id==request.get_vars['quiz']).select()[0]
+    if quiz.author_id != auth.user.id:
+        redirect('/QuizMe/quizzes')
+    for question in quiz.questions:
+        db(db.question.id==question.id).delete()
+    db(db.quiz.id==quiz.id).delete()
+    redirect('/QuizMe/quizzes')
 #This function is used when submitting a guess so that all necessary operations are done in one transaction
 def submitGuess(qid, userid, answer):
     activeQ = db(db.question.id==qid).select()[0]
@@ -169,3 +240,9 @@ def submitAnswer():
     else:
         result = "Question not active - try again in a bit!"
     return result
+
+def deleteQuestion(quiz, qnum):
+    db(db.question.id == quiz.questions[qnum-1]).delete()
+    newQuestions = quiz.questions
+    del newQuestions[qnum-1]
+    db(db.quiz.id == quiz.id).update(questions=newQuestions)

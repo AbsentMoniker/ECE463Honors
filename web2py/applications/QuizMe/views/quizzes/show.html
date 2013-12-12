@@ -5,7 +5,7 @@
 {{qnum = 1}}
 {{for q in questions:}}
 <h3>
-    {{=qnum}}) {{=q.question}}
+    <a href={{=URL('quizzes','editquestion', vars={'quiz':quiz.id, 'qnum':qnum} )}}>{{=qnum}}) {{=q.question}}</a>
     {{qnum+=1}}
 </h3>
 <ol type='a'>
